@@ -14,9 +14,8 @@ def chat():
         response = get_response(user_input)
         return jsonify({"response": response})
     except Exception as e:
-        print("Error:", e)
-        return jsonify({"response": "⚠ Couldn't fetch response."})
-
-
+        import traceback
+        traceback.print_exc()  
+        return jsonify({"response": f"⚠ Error: {str(e)}"})
 if __name__ == "__main__":
     app.run(host="0.0.0.0",port=10000)
