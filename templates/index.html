@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversational Ai Chatbot</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #f4f4f4;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 20px 0 0 0;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      width: 100%;
+      overflow-y: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .message {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background-color: #dcf8c6;
+      align-self: flex-end;
+    }
+
+    .bot {
+      background-color: #e0e0e0;
+      align-self: flex-start;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 10px 20px;
+      border-top: 1px solid #ccc;
+      background-color: white;
+      max-width: 800px;
+      margin: auto;
+      width: 100%;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .input-area button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Conversational Ai Chatbot</h2>
+
+  <div class="chat-container" id="chatContainer">
+    <!-- Messages appear here -->
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="message" placeholder="Ask something..." autofocus />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const input = document.getElementById("message");
+    const chatContainer = document.getElementById("chatContainer");
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage(message, "user");
+      input.value = "";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ message })
+      });
+
+      try {
+        const data = await res.json();
+        addMessage(data.response, "bot");
+      } catch {
+        addMessage("⚠ Could not fetch response.", "bot");
+      }
+    }
+
+    function addMessage(text, type) {
+      const msg = document.createElement("div");
+      msg.className = `message ${type}`;
+      msg.innerText = text;
+      chatContainer.appendChild(msg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  </script>
+</body>
+</html>
